@@ -83,9 +83,14 @@ def config_mlflow():
                             log_model_signatures=True)
 
 
-def train_model(model, X_train, y_train):
+def train_model(model, X_train, y_train, is_train = True):
     with mlflow.start_run(run_name='experiment_01') as run:
         model.fit(X_train, y_train, epochs=50, validation_split=0.2, verbose=3)
+
+    if is_train:
+        run_id = run.info.run_id
+        run_url = f'runs:/{run_id}'
+        mlflow.register_model(run_url, 'fetal_health')
 
 if __name__ == '__main__':
     X_train, X_test, y_train, y_test = process_data()
